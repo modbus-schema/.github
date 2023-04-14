@@ -9,9 +9,9 @@ So essentially the intent of this project is to create a machine-readable standa
 Intended effect:
 - The schema for a specific device only needs to be written ONCE.
 - The code generator + runtime for a specific language only needs to be written ONCE.
-- For all devices it is no trivial to generate code that maps the registers into usable values.
-- A new device is immediately possible in all languages.
-- A new language immediately can use all defined devices.
+- For all devices it is now trivial to generate code that maps the registers into usable values.
+- A new device is immediately available in all programming languages.
+- A new language immediately can provide tooling for all defined devices.
 
 # Overall status
 **Work in progress. Not yet usable.**
@@ -40,7 +40,9 @@ Intended effect:
 # A schema for modbus ?
 Yes, this is a sample of what my current idea of a schema looks like.
 
-Note that `source` is an expression that is parsed into a tree and can be used to generate code in many common languages. So languages like Java, Go, Python, PHP, C#, ... should all be possible.
+Note that `source` is an expression that is parsed into a tree and can be used to generate code in many common languages. 
+
+So languages like Java, Go, Python, PHP, C#, ... should all be possible.
 
 ```yaml
 name: 'ParseTest'
