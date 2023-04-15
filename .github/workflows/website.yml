@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2023 Niels Basjes
+# Copyright (C) 2022-2023 Niels Basjes
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 name: Documentation Website
 
 on:
+  # Runs on pushes targeting the default branch
   push:
     branches:
       - main  # Set a branch to deploy
@@ -37,28 +38,56 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+# Default to bash
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  deploy:
+  # Build job
+  build:
     runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.111.3
     steps:
-      - name: Checkout
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3.5.0
-        with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+    - name: Install Hugo CLI
+      run: |
+        wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+        && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+    - name: Install Dart Sass Embedded
+      run: sudo snap install dart-sass-embedded
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Setup Pages
+      id: pages
+      uses: actions/configure-pages@v3
+    - name: Install Node.js dependencies
+      run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+    - name: Build with Hugo
+      env:
+        # For maximum backward compatibility with Hugo modules
+        HUGO_ENVIRONMENT: production
+        HUGO_ENV: production
+      run: |
+        cd website && \
+        hugo \
+          --minify \
+          --baseURL "${{ steps.pages.outputs.base_url }}/"
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: ./website/public
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@16361eb4acea8698b220b76c0d4e84e1fd22c61d # v2.6.0
-        with:
-          hugo-version: 'latest'
-          # extended: true
-
-      - name: Build
-        run: cd website && hugo --minify
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847 # v3.9.3
-        if: github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./website/public
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2

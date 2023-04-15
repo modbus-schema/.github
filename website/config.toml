@@ -46,14 +46,14 @@ home = [ "HTML", "RSS", "JSON"]
   # Order sections in menu by "weight" or "title". Default to "weight"
   ordersectionsby = "weight"
   # Change default color scheme with a variant one. Can be "red", "blue", "green".
-  themeVariant = "yauaa"
+  themeVariant = "modbus"
   # Provide a list of custom css files to load relative from the `static/` folder in the site root.
 #  custom_css = ["css/foo.css", "css/bar.css"]
   # Change the title separator. Default to "::".
   titleSeparator = " | "
 
   landingPageURL = "/"
-  landingPageName = "<i class='fas fa-home'></i> Yauaa"
+  landingPageName = "<i class='fas fa-home'></i> Modbus Schema"
 
 [[menu.shortcuts]]
 name = "<i class='fab fa-git-square'></i> Git repo"
