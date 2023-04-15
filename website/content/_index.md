@@ -3,7 +3,7 @@ title = "Modbus Schema Toolkit"
 linkTitle = "Modbus Schema"
 +++
 
-# What is this?
+## What is this?
 The intent of these projects is
 1. creating a generic way of defining the extraction of data from a modbus device that maps the raw registers into meaning full values.
 2. doing it in such a way that a code generator for any (common) programming language can be created that generates the code needed to read the data from the device and actually execute the transformation into the meaning full fields.
@@ -17,11 +17,15 @@ Intended effect:
 - For all devices it is now trivial to generate code that maps the registers into usable values.
 - A new device is immediately available in all programming languages.
 - A new language immediately can provide tooling for all defined devices.
+
 ---
-# Overall status
+
+## Overall status
 **Work in progress. Not yet usable.**
+
 ---
-# Steps and progress ...
+
+## Steps and progress ...
 - [x] Define raw schema format
   - [x] Basic device parameters
   - [x] Fields
@@ -41,8 +45,10 @@ Intended effect:
 - [ ] Implement Java code generator
   - [ ] Core code generator with runtime library.
   - [ ] Code generator for unit test that is based on the reference data and expected values.
+
 ---
-# A schema for modbus ?
+
+## A schema for modbus ?
 Yes, this is a sample of what my current idea of a schema looks like.
 
 Note that `source` is an expression that is parsed into a tree and can be used to generate code in many common languages.
@@ -76,16 +82,19 @@ fields:
 ```
 
 ---
-# Who is doing all of this?
+
+## Who is doing all of this?
 Just me: [Niels Basjes](https://github.com/nielsbasjes)
 
 ---
+
 ## Donations
 If this project has business value for you then don't hesitate to support me with a small donation.
 
 [![Donations via PayPal](https://img.shields.io/badge/Donations-via%20Paypal-blue.svg)](https://www.paypal.me/nielsbasjes)
 
 ---
+
 ## License
 
     Copyright (C) 2023 Niels Basjes
