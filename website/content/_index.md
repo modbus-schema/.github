@@ -32,12 +32,12 @@ Intended effect:
     - [x] Meta data
     - [x] How to get to the value of this field (i.e. which registers and how to map it all)
 - [x] Create parser and prove it can be used to do some kind of code generation.
-  - [ ] Create maven plugin so we can automate that process.
-- [ ] Define reference testing next to the schema
+  - [x] Create maven plugin so we can automate that process.
+- [x] Define reference testing next to the schema
+  - [x] A way of setting the expected values for each field for those bytes.
   - [ ] Tool to extract raw bytes from real device using the schema.
     - This must use the schema as the basis.
-    - It was found that retrieving partial values (i.e. only some of the reisters of a value) from a device results in garbage register values.
-  - [ ] A way of setting the expected values for each field for those bytes.
+    - It was found that retrieving partial values (i.e. only some of the registers of a value) from a device results in garbage register values.
 - [ ] Define for a specific device the schema (i.e. the devices I actually have go first).
   - [ ] SDM630 : Simple: All fields are 2 registers IEEE754 32bit Floating point numbers
   - [ ] Thermia: Medium: Many field formats with varying multipliers
@@ -51,34 +51,57 @@ Intended effect:
 ## A schema for modbus ?
 Yes, this is a sample of what my current idea of a schema looks like.
 
-Note that `source` is an expression that is parsed into a tree and can be used to generate code in many common languages.
+Note that `source` is an expression that can be used to generate code in many programming languages.
 
-So languages like Java, Go, Python, PHP, C#, ... should all be possible.
+My intention is to make it possible to generate code for languages like Java, Go, Python, PHP, C#, ... 
 
 ```yaml
 name: 'ParseTest'
-maxRegistersPerModbusRequest: 42
-startingAddress: 30000
+modbusSchemaLevel: 1
+maxRegistersPerModbusRequest: 125
+baseModbusAddress: 30000
 modbusFunction: 'input-register'
-    #    coil 0
-    #    discrete-input 1
-    #    input-register   3
-    #    holding-register   4
-fields:
-- name : 'FieldName1'
-  type : float32
-  source: 'ieee754_32(30003,2) / 100 ^ ScalingFactor - FieldName2'
-  description : 'Some field'
-  unit: 'BogoUnits'
-- name : 'FieldName2'
-  type : float64
-  source: 'sint64(30005,2) / 100'
-  description : 'Some other field'
-  unit: 'KBogoUnits'
-- name : 'ScalingFactor'
-  type : int64
-  source: '10'
-  description : 'The scaling factor'
+#    coil 0
+#    discrete-input 1
+#    input-register   3
+#    holding-register   4
+blocks:
+- name: 'FirstBlock'
+  fields:
+  - name : 'SerialNumber'
+    type : string
+    source: 'utf8(1,20)'
+    description : 'The serial number of the device'
+    unit: 'BogoUnits'
+  - name : 'FieldName1'
+    type : float32
+    source: 'ieee754_32(21,2) / 100 ^ ScalingFactor - FieldName2'
+    description : 'Some field'
+    unit: 'BogoUnits'
+  - name : 'FieldName2'
+    type : float64
+    source: 'sint64(25,2) / 100'
+    description : 'Some other field'
+    unit: 'KBogoUnits'
+  - name : 'ScalingFactor'
+    type : int64
+    source: '10'
+    description : 'The scaling factor'
+
+tests:
+- name: 'First Test'
+  baseModbusAddress: 30000
+  # The list of raw register values. First register is '1'
+  registers: 1234 5678 90AB CDEF
+  description: 'Random test'
+  blocks:
+  - blockName: 'FirstBlock'
+    expected:
+      SerialNumber:  '1234567890'
+      FieldName1:    3.14159
+      FieldName2:    2.71828
+      ScalingFactor: 10
+
 ```
 
 ---
