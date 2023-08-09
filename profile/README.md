@@ -23,7 +23,7 @@ My intention is to make it possible to generate code for languages like Java, Go
 name: 'ParseTest'
 modbusSchemaLevel: 1
 maxRegistersPerModbusRequest: 125
-baseModbusAddress: 30000
+baseModbusRegisterNumber: 30001
 modbusFunction: 'input-register'
     #    coil 0
     #    discrete-input 1
@@ -54,7 +54,7 @@ blocks:
 
 tests:
 - name: 'First Test'
-  baseModbusAddress: 30000
+  baseModbusRegisterNumber: 30001
   # The list of raw register values. First register is '1'
   registers: 1234 5678 90AB CDEF
   description: 'Random test'
